@@ -8,10 +8,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, classification_report
 
-from dataProccesing.Models.LR_model import LRModel
-from dataProccesing.Models.SVM_model import SVMModel
+from Models.LR_model import LRModel
+from Models.SVM_model import SVMModel
 
-LR_model = LRModel("../CSVfiles/balanced_mbti.csv", cleaned=True)
+# LR_model = LRModel("../CSVfiles/balanced_mbti.csv", cleaned=True)
+LR_model = LRModel("../CSVfiles/mbti_no_types_names.csv", cleaned=True)
 
 #===========================================================================
 # experiment on populations of people who are usually not assertive
@@ -149,9 +150,9 @@ LR_model = LRModel("../CSVfiles/balanced_mbti.csv", cleaned=True)
 #     if not isinstance(post_text, str):
 #         continue
 #     predicted_label = predict_post_not_clean(post_text, LR_model.vectorizer, LR_model.model)
-#     if predicted_label == "non-assertive (0)" and row['label'] != "ENTJ" and row['label'] != "ESTJ":
+#     if predicted_label == "non-assertive (0)" and row['label'] != "entj" and row['label'] != "estj":
 #         success_count += 1
-#     elif predicted_label == "assertive (1)" and row['label'] == "ENTJ" and row['label'] == "ESTJ":
+#     elif predicted_label == "assertive (1)" and row['label'] == "entj" and row['label'] == "estj":
 #         success_count += 1
 #     else:
 #         failed_count += 1
@@ -168,25 +169,26 @@ LR_model = LRModel("../CSVfiles/balanced_mbti.csv", cleaned=True)
 #=======================================
 # experiment no not cleaned data-set
 # ======================================
-#with MBTI types name
-SVM_model = SVMModel("PersonalityCafe_mbti.csv", cleaned=True)
 
-SVM_model.prediction()
-
-mbti_data = pd.read_csv("PersonalityCafe_mbti.csv")
-
-def remove_types(text):
-    # remove MBTI type names from the text
-    types = ["istj", "isfj", "infj", "intj", "istp", "isfp", "infp", "intp",
-             "estp", "esfp", "enfp", "entp", "estj", "esfj", "enfj", "entj"]
-    words = text.split()
-    words = [w for w in words if not w in types]
-    return ' '.join(words)
-
+# #with MBTI types name
+# SVM_model = SVMModel("PersonalityCafe_mbti.csv", cleaned=True)
+#
+# SVM_model.prediction()
+#
+# mbti_data = pd.read_csv("PersonalityCafe_mbti.csv")
+#
+# def remove_types(text):
+#     # remove MBTI type names from the text
+#     types = ["istj", "isfj", "infj", "intj", "istp", "isfp", "infp", "intp",
+#              "estp", "esfp", "enfp", "entp", "estj", "esfj", "enfj", "entj"]
+#     words = text.split()
+#     words = [w for w in words if not w in types]
+#     return ' '.join(words)
+#
 # mbti_data['posts'] = mbti_data['posts'].apply(remove_types)
 # mbti_data.to_csv('PersonalityCafe_no_types_names.csv', index=False)
-
-#without MBTI types name
-SVM_model = SVMModel("PersonalityCafe_no_types_names.csv", cleaned=True)
-
-SVM_model.prediction()
+#
+# # without MBTI types name
+# SVM_model = SVMModel("PersonalityCafe_no_types_names.csv", cleaned=True)
+#
+# SVM_model.prediction()

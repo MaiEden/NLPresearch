@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
-from dataProccesing.Models.models_utilities import clean_text, predict_additional_posts, predict_post
+from Models.models_utilities import clean_text, predict_additional_posts, predict_post
 
 class LRModel:
 
@@ -63,3 +63,38 @@ class LRModel:
         Predict a single post using the trained model.
         """
         return predict_post(post_text, self.vectorizer, self.model)
+
+    def get_feature_weights(self, top_n=20):
+        """
+        Returns the words with the most assertive and non-assertive weights.
+        """
+        feature_names = self.vectorizer.get_feature_names_out()  # List of words
+        coefs = self.model.coef_[0]  # Weight vector (binary – just one row)
+
+        coef_df = pd.DataFrame({
+            'word': feature_names,
+            'weight': coefs
+        })
+
+        # Words that lean most towards assertiveness (label=1)
+        top_assertive = coef_df.sort_values('weight', ascending=False).head(top_n)
+
+        # Words that lean most towards non-assertive (label=0)
+        top_non_assertive = coef_df.sort_values('weight', ascending=True).head(top_n)
+
+        return top_assertive, top_non_assertive
+
+    def get_word_weight(self, word):
+        """
+        Returns the weight of a given word (if it exists in the vocabulary)
+        """
+        feature_names = self.vectorizer.get_feature_names_out()
+        # Create a mapping from word to its index
+        word_to_idx = {w: i for i, w in enumerate(feature_names)}
+
+        if word not in word_to_idx:
+            return None  # The word did not appear in the corpus/was not output by the vectorizer
+
+        idx = word_to_idx[word]
+        weight = self.model.coef_[0][idx]
+        return weight
